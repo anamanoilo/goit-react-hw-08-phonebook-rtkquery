@@ -3,7 +3,7 @@ import { nanoid } from 'nanoid';
 import Form from './Form';
 import ContactList from './ContactList';
 import Filter from './Filter';
-
+import * as storage from 'services/localStorage';
 // const arrayToTest = [
 //   { id: 'id-1', name: 'Rosie Simpson', number: '459-12-56' },
 //   { id: 'id-2', name: 'Hermione Kline', number: '443-89-12' },
@@ -17,6 +17,20 @@ class App extends Component {
     filter: '',
   };
 
+  componentDidMount() {
+    if (!!storage.get(storage.STORAGE_KEYS.CONTACTS)) {
+      this.setState(prev => ({
+        ...prev,
+        contacts: [...storage.get(storage.STORAGE_KEYS.CONTACTS)],
+      }));
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.contacts.length !== this.state.contacts.length) {
+      storage.save(storage.STORAGE_KEYS.CONTACTS, this.state.contacts);
+    }
+  }
   submitHandler = data => {
     const normalizedName = data.name.toLowerCase();
     if (
