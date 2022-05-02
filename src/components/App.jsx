@@ -1,20 +1,19 @@
-import { useState } from 'react';
-import { nanoid } from 'nanoid';
+import { useSelector, useDispatch } from 'react-redux';
+import selectors from 'redux/phonebook/phonebook-selectors';
+import changeFilter from 'redux/phonebook/phonebook-actions';
+import { addContact, deleteContact } from 'redux/phonebook/phonebook-reducers';
+// import Container from './Container';
 import Form from './Form';
 import ContactList from './ContactList';
 import Filter from './Filter';
-import useLocalStorage from 'hooks/useLocalStorage';
-import { STORAGE_KEYS } from 'services/localStorage';
 
-// const arrayToTest = [
-//   { id: 'id-1', name: 'Rosie Simpson', number: '459-12-56' },
-//   { id: 'id-2', name: 'Hermione Kline', number: '443-89-12' },
-//   { id: 'id-4', name: 'Annie Copeland', number: '227-91-26' },
-// ];
+const { getFilter, getContacts } = selectors;
 
 const App = () => {
-  const [contacts, setContacts] = useLocalStorage(STORAGE_KEYS.CONTACTS, []);
-  const [filter, setFilter] = useState('');
+  const dispatch = useDispatch();
+
+  const contacts = useSelector(getContacts);
+  const filter = useSelector(getFilter);
 
   const submitHandler = data => {
     const normalizedName = data.name.toLowerCase();
@@ -22,21 +21,22 @@ const App = () => {
       alert(`${data.name} is already in the contacts`);
       return;
     }
-    setContacts([...contacts, { id: nanoid(), ...data }]);
+    dispatch(addContact(data));
   };
 
   const onFilterChange = e => {
-    setFilter(e.target.value);
+    dispatch(changeFilter(e.target.value));
   };
 
   const onDeleteClick = id => {
-    setContacts(contacts.filter(contact => contact.id !== id));
+    dispatch(deleteContact(id));
   };
 
   const normalizedFilter = filter.toLowerCase();
   const filteredContacts = contacts.filter(contact =>
     contact.name.toLowerCase().includes(normalizedFilter)
   );
+
   return (
     <div>
       <h1>Phonebook</h1>

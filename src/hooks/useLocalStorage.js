@@ -1,13 +1,21 @@
 import { useEffect, useState } from 'react';
-import * as storage from 'services/localStorage';
 
 const useLocalStorage = (key, defaultValue) => {
   const [state, setState] = useState(() => {
-    return storage.get(key) ? [...storage.get(key)] : defaultValue;
+    try {
+      const storageData = JSON.parse(localStorage.getItem(key));
+      return storageData ? [...storageData] : defaultValue;
+    } catch (error) {
+      return defaultValue;
+    }
   });
 
   useEffect(() => {
-    storage.save(key, state);
+    try {
+      localStorage.setItem(key, JSON.stringify(state));
+    } catch (error) {
+      return null;
+    }
   }, [key, state]);
 
   return [state, setState];
