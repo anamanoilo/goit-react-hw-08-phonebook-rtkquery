@@ -7,14 +7,19 @@ import { toast } from 'react-toastify';
 import Loader from 'components/Loader/Loader';
 
 const ContactList = () => {
-  const { data: contacts = [], isError, isLoading } = useFetchContactsQuery();
+  const { data: contacts, error, isLoading } = useFetchContactsQuery();
+  console.log('~ contacts', contacts);
 
   const filteredContacts = useSelector(state =>
     selectors.getVisibleContacts(state, contacts)
   );
 
-  if (isError) {
-    return toast.error('Something went wrong. Please try again later.');
+  if (!!error) {
+    return error.status === 404 ? (
+      <p className={s.error}>The contact list is empty.</p>
+    ) : (
+      toast.error('Something went wrong. Please try again later.')
+    );
   }
   if (isLoading) {
     return (
