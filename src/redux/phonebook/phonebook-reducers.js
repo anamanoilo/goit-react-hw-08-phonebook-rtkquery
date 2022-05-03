@@ -1,31 +1,17 @@
 import { combineReducers } from 'redux';
-import { createReducer, createSlice } from '@reduxjs/toolkit';
-import { nanoid } from 'nanoid';
-import changeFilter from './phonebook-actions';
+import { createReducer } from '@reduxjs/toolkit';
+import phonebookApi from 'services/phonebookApi';
+import { createAction } from '@reduxjs/toolkit';
+
+export const changeFilter = createAction('filter/change');
 
 const filterReducer = createReducer('', {
   [changeFilter]: (_, action) => action.payload,
 });
 
-const contactsReducer = createSlice({
-  name: 'contacts',
-  initialState: [],
-  reducers: {
-    addContact: (state, { payload }) => [
-      ...state,
-      { id: nanoid(), ...payload },
-    ],
-    deleteContact: (state, { payload }) =>
-      state.filter(contact => contact.id !== payload),
-  },
-  extraReducers: {},
-});
-
-export const { addContact, deleteContact } = contactsReducer.actions;
-
 const rootReducer = combineReducers({
   filter: filterReducer,
-  contacts: contactsReducer.reducer,
+  [phonebookApi.reducerPath]: phonebookApi.reducer,
 });
 
 export default rootReducer;

@@ -1,20 +1,49 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { toast } from 'react-toastify';
 import s from './Form.module.css';
-import PropTypes from 'prop-types';
+import {
+  useAddContactMutation,
+  useFetchContactsQuery,
+} from 'services/phonebookApi';
+import Loader from 'components/Loader/Loader';
 
-const Form = ({ addContact }) => {
+const Form = () => {
   const [name, setName] = useState('');
-  const [number, setNumber] = useState('');
+  const [phone, setPhone] = useState('');
+  const { data: contacts } = useFetchContactsQuery();
+  const [addContact, { isLoading, isSuccess, isError }] =
+    useAddContactMutation();
+
   const reset = () => {
     setName('');
-    setNumber('');
+    setPhone('');
   };
 
   const onSubmit = e => {
     e.preventDefault();
-    addContact({ name, number });
+    const normalizedName = name.toLowerCase();
+    if (contacts?.some(({ name }) => name.toLowerCase() === normalizedName)) {
+      toast.error(`${name} is already in the contacts`);
+      return;
+    }
+    addContact({ name, phone });
+    // toast.success(`${name} has been successfully added to your contact list.`);
     reset();
   };
+
+  useEffect(() => {
+    if (isSuccess) {
+      toast.success(
+        `The contact has been successfully added to your contact list.`
+      );
+    }
+  }, [isSuccess]);
+
+  useEffect(() => {
+    if (isError) {
+      toast.error(`Something went wrong. Please try again later.`);
+    }
+  }, [isError]);
 
   const onChangeInput = ({ target }) => {
     const { value, name } = target;
@@ -22,8 +51,8 @@ const Form = ({ addContact }) => {
       case 'name':
         setName(value);
         return;
-      case 'number':
-        setNumber(value);
+      case 'phone':
+        setPhone(value);
         return;
       default:
         return;
@@ -51,23 +80,21 @@ const Form = ({ addContact }) => {
         <input
           className={s.input}
           type="tel"
-          name="number"
+          name="phone"
           pattern="\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}"
           title="Phone number must be digits and can contain spaces, dashes, parentheses and can start with +"
           required
           autoComplete="off"
           onChange={onChangeInput}
-          value={number}
+          value={phone}
         />
       </label>
 
-      <button type="submit">Add contact</button>
+      <button type="submit" className={s.addBtn}>
+        {isLoading ? <Loader width="20" height="20" /> : 'Add contact'}
+      </button>
     </form>
   );
-};
-
-Form.propTypes = {
-  addContact: PropTypes.func.isRequired,
 };
 
 export default Form;

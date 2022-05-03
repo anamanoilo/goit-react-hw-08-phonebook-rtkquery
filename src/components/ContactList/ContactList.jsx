@@ -1,31 +1,35 @@
+import { useSelector } from 'react-redux';
 import s from './ContactList.module.css';
-import PropTypes from 'prop-types';
+import { useFetchContactsQuery } from 'services/phonebookApi';
+import selectors from 'redux/phonebook/phonebook-selectors';
+import ContactItem from 'components/ContactItem';
+import { toast } from 'react-toastify';
+import Loader from 'components/Loader/Loader';
 
-const ContactList = ({ contacts, onDeleteClick }) => {
+const ContactList = () => {
+  const { data: contacts = [], isError, isLoading } = useFetchContactsQuery();
+
+  const filteredContacts = useSelector(state =>
+    selectors.getVisibleContacts(state, contacts)
+  );
+
+  if (isError) {
+    return toast.error('Something went wrong. Please try again later.');
+  }
+  if (isLoading) {
+    return (
+      <div className={s.loader}>
+        <Loader width="50" height="50" />
+      </div>
+    );
+  }
   return (
     <ul className={s.list}>
-      {contacts.map(({ id, name, number }) => (
-        <li key={id} className={s.item}>
-          <p>
-            {name}: {number}
-          </p>
-          <button type="button" onClick={() => onDeleteClick(id)}>
-            Delete
-          </button>
-        </li>
+      {filteredContacts.map(({ id, name, phone }) => (
+        <ContactItem name={name} phone={phone} id={id} key={id} />
       ))}
     </ul>
   );
 };
 
-ContactList.propTypes = {
-  contacts: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.string.isRequired,
-      name: PropTypes.string.isRequired,
-      number: PropTypes.string.isRequired,
-    }).isRequired
-  ),
-  onDeleteClick: PropTypes.func.isRequired,
-};
 export default ContactList;

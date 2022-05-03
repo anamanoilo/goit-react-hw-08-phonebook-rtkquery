@@ -1,5 +1,12 @@
-const getFilter = state => state.phonebook.filter;
-const getContacts = state => state.phonebook.contacts;
+const getFilter = state => state.filter;
 
-const selectors = { getFilter, getContacts };
+const getVisibleContacts = (state, data) => {
+  const normalizedFilter = getFilter(state).toLowerCase();
+  return data.filter(contact =>
+    contact.name.toLowerCase().includes(normalizedFilter)
+  );
+};
+
+const selectors = { getFilter, getVisibleContacts };
+
 export default selectors;
