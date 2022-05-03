@@ -8,7 +8,6 @@ import Loader from 'components/Loader/Loader';
 
 const ContactList = () => {
   const { data: contacts, error, isLoading } = useFetchContactsQuery();
-  console.log('~ contacts', contacts);
 
   const filteredContacts = useSelector(state =>
     selectors.getVisibleContacts(state, contacts)
