@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { toast } from 'react-toastify';
 import s from './ContactItem.module.css';
 import PropTypes from 'prop-types';
@@ -6,25 +5,17 @@ import { useDeleteContactMutation } from 'services/phonebookApi';
 import Loader from 'components/Loader/Loader';
 
 const ContactItem = ({ id, name, phone }) => {
-  const [deleteContact, { isLoading, isSuccess, isError }] =
-    useDeleteContactMutation();
-  const onDeleteClick = id => {
-    deleteContact(id);
-  };
-
-  useEffect(() => {
-    if (isSuccess) {
+  const [deleteContact, { isLoading }] = useDeleteContactMutation();
+  const onDeleteClick = async id => {
+    try {
+      await deleteContact(id);
       toast.success(
         `The contact has been successfully deleted from your contact list.`
       );
-    }
-  }, [isSuccess]);
-
-  useEffect(() => {
-    if (isError) {
+    } catch (err) {
       toast.error(`Something went wrong. Please try again.`);
     }
-  }, [isError]);
+  };
 
   return (
     <li key={id} className={s.item}>

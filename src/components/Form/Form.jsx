@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { toast } from 'react-toastify';
 import s from './Form.module.css';
 import {
@@ -11,39 +11,30 @@ const Form = () => {
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const { data: contacts } = useFetchContactsQuery();
-  const [addContact, { isLoading, isSuccess, isError }] =
-    useAddContactMutation();
+  const [addContact, { isLoading }] = useAddContactMutation();
 
   const reset = () => {
     setName('');
     setPhone('');
   };
 
-  const onSubmit = e => {
+  const onSubmit = async e => {
     e.preventDefault();
     const normalizedName = name.toLowerCase();
     if (contacts?.some(({ name }) => name.toLowerCase() === normalizedName)) {
       toast.error(`${name} is already in the contacts`);
       return;
     }
-    addContact({ name, phone });
-    // toast.success(`${name} has been successfully added to your contact list.`);
-    reset();
-  };
-
-  useEffect(() => {
-    if (isSuccess) {
+    try {
+      await addContact({ name, phone });
       toast.success(
-        `The contact has been successfully added to your contact list.`
+        `${name} has been successfully added to your contact list.`
       );
-    }
-  }, [isSuccess]);
-
-  useEffect(() => {
-    if (isError) {
+      reset();
+    } catch (error) {
       toast.error(`Something went wrong. Please try again later.`);
     }
-  }, [isError]);
+  };
 
   const onChangeInput = ({ target }) => {
     const { value, name } = target;
