@@ -8,9 +8,6 @@ import Loader from 'components/Loader/Loader';
 const ContactItem = ({ id, name, phone }) => {
   const [deleteContact, { isLoading, isSuccess, isError }] =
     useDeleteContactMutation();
-  const onDeleteClick = async id => {
-    deleteContact(id);
-  };
 
   useEffect(() => {
     if (isSuccess) {
@@ -34,7 +31,7 @@ const ContactItem = ({ id, name, phone }) => {
       <button
         className={s.deleteBtn}
         type="button"
-        onClick={() => onDeleteClick(id)}
+        onClick={() => deleteContact(id)}
       >
         {isLoading ? <Loader width="20" height="20" /> : 'Delete'}
       </button>
