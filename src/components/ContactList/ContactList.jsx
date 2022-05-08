@@ -1,4 +1,9 @@
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  getContacts,
+  deleteContact,
+  addContact,
+} from 'redux/phonebook/contacts-operations';
 import s from './ContactList.module.css';
 import { useFetchContactsQuery } from 'services/phonebookApi';
 import selectors from 'redux/phonebook/phonebook-selectors';
@@ -8,12 +13,13 @@ import Loader from 'components/Loader/Loader';
 
 const ContactList = () => {
   const { data: contacts, error, isLoading } = useFetchContactsQuery();
-
+  // const loading = useSelector(selectors.getLoading);
+  // const errorStatus = useSelector(selectors.getErrorStatus);
   const filteredContacts = useSelector(state =>
     selectors.getVisibleContacts(state, contacts)
   );
 
-  if (!!error) {
+  if (error) {
     return error.status === 404 ? (
       <p className={s.error}>The contact list is empty.</p>
     ) : (
@@ -29,8 +35,8 @@ const ContactList = () => {
   }
   return (
     <ul className={s.list}>
-      {filteredContacts.map(({ id, name, phone }) => (
-        <ContactItem name={name} phone={phone} id={id} key={id} />
+      {filteredContacts.map(({ id, name, number }) => (
+        <ContactItem name={name} number={number} id={id} key={id} />
       ))}
     </ul>
   );

@@ -17,6 +17,11 @@
   margin-right: 6px;
 }
 
+.phone {
+  text-decoration: none;
+  color: black;
+}
+
 .deleteBtn {
   display: flex;
   justify-content: center;

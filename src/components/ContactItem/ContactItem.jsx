@@ -3,14 +3,20 @@ import { toast } from 'react-toastify';
 import s from './ContactItem.module.css';
 import PropTypes from 'prop-types';
 import { useDeleteContactMutation } from 'services/phonebookApi';
-import Loader from 'components/Loader/Loader';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  getContacts,
+  deleteContact,
+  addContact,
+} from 'redux/phonebook/contacts-operations';
+import selectors from 'redux/phonebook/phonebook-selectors';
+import Button from 'components/Button';
 
-const ContactItem = ({ id, name, phone }) => {
+const ContactItem = ({ id, name, number }) => {
   const [deleteContact, { isLoading, isSuccess, isError }] =
     useDeleteContactMutation();
-  const onDeleteClick = async id => {
-    deleteContact(id);
-  };
+  const loading = useSelector(selectors.getLoading);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (isSuccess) {
@@ -18,6 +24,9 @@ const ContactItem = ({ id, name, phone }) => {
         `The contact has been successfully deleted from your contact list.`
       );
     }
+    // if (status === 'rejected') {
+    //   toast.error(`Something went wrong. Please try again.`);
+    // }
   }, [isSuccess]);
 
   useEffect(() => {
@@ -28,16 +37,18 @@ const ContactItem = ({ id, name, phone }) => {
 
   return (
     <li key={id} className={s.item}>
-      <p>
-        <span className={s.contactName}>{name}:</span> {phone}
-      </p>
-      <button
-        className={s.deleteBtn}
+      <div>
+        <span className={s.contactName}>{name}:</span>{' '}
+        <a className={s.phone} href={`tel:+${number}`}>
+          {number}
+        </a>
+      </div>
+      <Button
         type="button"
-        onClick={() => onDeleteClick(id)}
-      >
-        {isLoading ? <Loader width="20" height="20" /> : 'Delete'}
-      </button>
+        onClick={() => deleteContact(id)}
+        disabled={isLoading}
+        label="Delete"
+      />
     </li>
   );
 };
@@ -45,7 +56,7 @@ const ContactItem = ({ id, name, phone }) => {
 ContactItem.propTypes = {
   id: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
-  phone: PropTypes.string.isRequired,
+  number: PropTypes.string.isRequired,
 };
 
 export default ContactItem;

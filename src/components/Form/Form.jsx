@@ -5,17 +5,28 @@ import {
   useAddContactMutation,
   useFetchContactsQuery,
 } from 'services/phonebookApi';
-import Loader from 'components/Loader/Loader';
+// import { useDispatch, useSelector } from 'react-redux';
+// import {
+//   getContacts,
+//   deleteContact,
+//   addContact,
+// } from 'redux/phonebook/contacts-operations';
+// import selectors from 'redux/phonebook/phonebook-selectors';
+import Button from 'components/Button';
 
 const Form = () => {
   const [name, setName] = useState('');
-  const [phone, setPhone] = useState('');
+  const [number, setNumber] = useState('');
+  // const dispatch = useDispatch();
+
+  // const contacts = useSelector(selectors.getContacts);
+  // const loading = useSelector(selectors.getLoading);
   const { data: contacts } = useFetchContactsQuery();
   const [addContact, { isLoading }] = useAddContactMutation();
 
   const reset = () => {
     setName('');
-    setPhone('');
+    setNumber('');
   };
 
   const onSubmit = async e => {
@@ -26,7 +37,8 @@ const Form = () => {
       return;
     }
     try {
-      await addContact({ name, phone });
+      // await dispatch(addContact({ name, number }));
+      await addContact({ name, number });
       toast.success(
         `${name} has been successfully added to your contact list.`
       );
@@ -42,8 +54,8 @@ const Form = () => {
       case 'name':
         setName(value);
         return;
-      case 'phone':
-        setPhone(value);
+      case 'number':
+        setNumber(value);
         return;
       default:
         return;
@@ -71,19 +83,17 @@ const Form = () => {
         <input
           className={s.input}
           type="tel"
-          name="phone"
+          name="number"
           pattern="\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}"
           title="Phone number must be digits and can contain spaces, dashes, parentheses and can start with +"
           required
           autoComplete="off"
           onChange={onChangeInput}
-          value={phone}
+          value={number}
         />
       </label>
 
-      <button type="submit" className={s.addBtn}>
-        {isLoading ? <Loader width="20" height="20" /> : 'Add contact'}
-      </button>
+      <Button type="submit" disabled={isLoading} label="Add contact" />
     </form>
   );
 };

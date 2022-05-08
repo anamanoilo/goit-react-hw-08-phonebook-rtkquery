@@ -7,7 +7,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  /* background-color: #eeeeee; */
+  background-color: #eeeeee;
 }
 
 code {
@@ -27,5 +27,6 @@ button {
 h1,
 h2 {
   text-align: center;
+  margin-top: 20px;
   margin-bottom: 20px;
 }
