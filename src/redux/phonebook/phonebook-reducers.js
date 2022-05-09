@@ -5,7 +5,6 @@ import { createReducer } from '@reduxjs/toolkit';
 import phonebookApi from 'services/phonebookApi';
 import { createAction } from '@reduxjs/toolkit';
 import authSlice from './auth-slice';
-// import contactsReducer from './contacts-async-slice';
 
 export const changeFilter = createAction('filter/change');
 
@@ -16,13 +15,11 @@ const filterReducer = createReducer('', {
 const persistConfig = {
   key: 'auth',
   storage,
-  // whitelist: ['token'],
 };
 
 const rootReducer = combineReducers({
   filter: filterReducer,
   [phonebookApi.reducerPath]: phonebookApi.reducer,
-  // contacts: contactsReducer.reducer,
   auth: persistReducer(persistConfig, authSlice.reducer),
 });
 
