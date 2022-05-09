@@ -2,9 +2,6 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 const phonebookApi = createApi({
   reducerPath: 'contacts',
-
-  // baseUrl: 'https://626febe1f7d739495bdeffa6.mockapi.io',
-
   baseQuery: fetchBaseQuery({
     baseUrl: 'https://connections-api.herokuapp.com',
     prepareHeaders: (headers, { getState }) => {
@@ -17,35 +14,35 @@ const phonebookApi = createApi({
   }),
   tagTypes: ['user', 'contacts'],
   endpoints: builder => ({
-    // registerUser: builder.mutation({
-    //   query: data => ({
-    //     url: '/users/signup',
-    //     method: 'POST',
-    //     body: data,
-    //   }),
-    //   invalidatesTags: ['user', 'contacts'],
-    // }),
-    // loginUser: builder.mutation({
-    //   query: data => ({
-    //     url: '/users/login',
-    //     method: 'POST',
-    //     body: data,
-    //   }),
-    //   invalidatesTags: ['user', 'contacts'],
-    // }),
-    // logoutUser: builder.mutation({
-    //   query: () => ({
-    //     url: `/users/logout`,
-    //     method: 'POST',
-    //   }),
-    //   invalidatesTags: ['user', 'contacts'],
-    // }),
-    // refreshUser: builder.query({
-    //   query: () => ({
-    //     url: `/users/current`,
-    //   }),
-    //   providesTags: ['user'],
-    // }),
+    registerUser: builder.mutation({
+      query: data => ({
+        url: '/users/signup',
+        method: 'POST',
+        body: data,
+      }),
+      invalidatesTags: ['user', 'contacts'],
+    }),
+    loginUser: builder.mutation({
+      query: data => ({
+        url: '/users/login',
+        method: 'POST',
+        body: data,
+      }),
+      invalidatesTags: ['user', 'contacts'],
+    }),
+    logoutUser: builder.mutation({
+      query: () => ({
+        url: `/users/logout`,
+        method: 'POST',
+      }),
+      invalidatesTags: ['user', 'contacts'],
+    }),
+    refreshUser: builder.query({
+      query: () => ({
+        url: `/users/current`,
+      }),
+      providesTags: ['user'],
+    }),
     fetchContacts: builder.query({
       query: () => '/contacts',
       providesTags: ['contacts'],
@@ -70,6 +67,10 @@ const phonebookApi = createApi({
 });
 
 export const {
+  useRegisterUserMutation,
+  useLoginUserMutation,
+  useLogoutUserMutation,
+  useRefreshUserQuery,
   useFetchContactsQuery,
   useAddContactMutation,
   useDeleteContactMutation,

@@ -1,28 +1,23 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import s from './Form.module.css';
 import {
   useAddContactMutation,
   useFetchContactsQuery,
 } from 'services/phonebookApi';
-// import { useDispatch, useSelector } from 'react-redux';
-// import {
-//   getContacts,
-//   deleteContact,
-//   addContact,
-// } from 'redux/phonebook/contacts-operations';
-// import selectors from 'redux/phonebook/phonebook-selectors';
+import authSelectors from 'redux/phonebook/auth-selectors';
+import { useSelector } from 'react-redux';
 import Button from 'components/Button';
 
 const Form = () => {
+  const isLoggedIn = useSelector(authSelectors.getIsLoggedIn);
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
-  // const dispatch = useDispatch();
-
-  // const contacts = useSelector(selectors.getContacts);
-  // const loading = useSelector(selectors.getLoading);
-  const { data: contacts } = useFetchContactsQuery();
-  const [addContact, { isLoading }] = useAddContactMutation();
+  const { data: contacts } = useFetchContactsQuery({
+    skip: !isLoggedIn,
+  });
+  const [addContact, { isLoading, isSuccess, isError }] =
+    useAddContactMutation();
 
   const reset = () => {
     setName('');
@@ -36,17 +31,24 @@ const Form = () => {
       toast.error(`${name} is already in the contacts`);
       return;
     }
-    try {
-      // await dispatch(addContact({ name, number }));
-      await addContact({ name, number });
+    addContact({ name, number });
+  };
+
+  useEffect(() => {
+    if (isSuccess) {
       toast.success(
         `${name} has been successfully added to your contact list.`
       );
       reset();
-    } catch (error) {
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isSuccess]);
+
+  useEffect(() => {
+    if (isError) {
       toast.error(`Something went wrong. Please try again later.`);
     }
-  };
+  }, [isError]);
 
   const onChangeInput = ({ target }) => {
     const { value, name } = target;
@@ -93,7 +95,12 @@ const Form = () => {
         />
       </label>
 
-      <Button type="submit" disabled={isLoading} label="Add contact" />
+      <Button
+        type="submit"
+        disabled={isLoading}
+        onClick={onSubmit}
+        label="Add contact"
+      />
     </form>
   );
 };

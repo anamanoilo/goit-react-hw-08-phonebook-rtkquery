@@ -15,24 +15,42 @@ const initialState = {
 const authSlice = createSlice({
   name: 'auth',
   initialState,
-  extraReducers: {
-    [registerContact.fulfilled]: (state, { payload }) => {
+  reducers: {
+    saveRegisterData: (state, { payload }) => {
       state.user = payload.user;
       state.token = payload.token;
       state.isLoggedIn = true;
     },
-    [loginContact.fulfilled]: (state, { payload }) => {
+    saveLoginData: (state, { payload }) => {
       state.user = payload.user;
       state.token = payload.token;
       state.isLoggedIn = true;
     },
-    [refreshUser.fulfilled]: (state, action) => {
+    refreshUserData: (state, action) => {
       state.user = action.payload;
     },
-    [logOut.fulfilled]: () => {
+    resetUserData: () => {
       return initialState;
     },
   },
+  // extraReducers: {
+  //   [registerContact.fulfilled]: (state, { payload }) => {
+  //     state.user = payload.user;
+  //     state.token = payload.token;
+  //     state.isLoggedIn = true;
+  //   },
+  //   [loginContact.fulfilled]: (state, { payload }) => {
+  //     state.user = payload.user;
+  //     state.token = payload.token;
+  //     state.isLoggedIn = true;
+  //   },
+  //   [refreshUser.fulfilled]: (state, action) => {
+  //     state.user = action.payload;
+  //   },
+  //   [logOut.fulfilled]: () => {
+  //     return initialState;
+  //   },
+  // },
 });
 
 export default authSlice;

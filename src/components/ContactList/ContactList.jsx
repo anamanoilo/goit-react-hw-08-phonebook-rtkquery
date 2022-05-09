@@ -11,21 +11,25 @@ import selectors from 'redux/phonebook/phonebook-selectors';
 import ContactItem from 'components/ContactItem';
 import { toast } from 'react-toastify';
 import Loader from 'components/Loader/Loader';
+import authSelectors from 'redux/phonebook/auth-selectors';
 
 const ContactList = () => {
-  const { data: contacts, error, isLoading } = useFetchContactsQuery();
-  // const loading = useSelector(selectors.getLoading);
-  // const errorStatus = useSelector(selectors.getErrorStatus);
+  const isLoggedIn = useSelector(authSelectors.getIsLoggedIn);
+  const {
+    data: contacts,
+    error,
+    isLoading,
+  } = useFetchContactsQuery(null, {
+    skip: !isLoggedIn,
+  });
+
   const filteredContacts = useSelector(state =>
     selectors.getVisibleContacts(state, contacts)
   );
 
   if (error) {
-    return error.status === 404 ? (
-      <p className={s.error}>The contact list is empty.</p>
-    ) : (
-      toast.error('Something went wrong. Please try again later.')
-    );
+    toast.error('Something went wrong. Please try again later.');
+    return null;
   }
   if (isLoading) {
     return (

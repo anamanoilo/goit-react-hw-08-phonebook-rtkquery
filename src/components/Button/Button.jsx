@@ -1,5 +1,6 @@
 import s from './Button.module.css';
 import Loader from 'components/Loader';
+import PropTypes from 'prop-types';
 
 const Button = ({
   type,
@@ -20,4 +21,11 @@ const Button = ({
   );
 };
 
+Button.propTypes = {
+  type: PropTypes.string.isRequired,
+  label: PropTypes.string.isRequired,
+  onClick: PropTypes.func.isRequired,
+  className: PropTypes.string,
+  disabled: PropTypes.bool,
+};
 export default Button;
